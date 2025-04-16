@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiFT - Ride & Drive</title>
+    <style>
+        :root {
+            --primary-color: #6a0dad;
+            --secondary-color: #9b59b6;
+            --accent-color: #8e44ad;
+            --light-purple: #e6e6fa;
+            --text-color: #333;
+            --white: #ffffff;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-purple);
+            color: var(--text-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--white);
+            color: var(--primary-color);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+        
+        .btn-purple {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .map-container {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .ride-options {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .ride-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .ride-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .ride-card:hover {
+            border-color: var(--secondary-color);
+            box-shadow: 0 4px 8px rgba(106, 13, 173, 0.2);
+        }
+        
+        .ride-card.selected {
+            border: 2px solid var(--primary-color);
+            background-color: rgba(106, 13, 173, 0.05);
+        }
+        
+        .ride-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        
+        .ride-price {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        
+        .ride-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .location-input {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+        
+        .book-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+        
+        .book-btn:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .modal-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .user-type-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .user-type-btn {
+            padding: 10px 20px;
+            border: none;
+            background-color: #eee;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .user-type-btn:first-child {
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .user-type-btn:last-child {
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .user-type-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .driver-form {
+            display: none;
+        }
+        
+        .status-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+        
+        .error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+        
+        .success {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .driver-dashboard {
+            display: none;
+        }
+        
+        .driver-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .ride-types {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">SwiFT</div>
+            <div class="tagline">Ride or Drive - Your Choice</div>
+            <div class="auth-buttons">
+                <button class="btn btn-primary" id="loginBtn">Log In</button>
+                <button class="btn btn-secondary" id="signupBtn">Sign Up</button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="main-content" id="riderView">
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+            
+            <div class="location-input">
+                <h3 class="section-title">Where to?</h3>
+                <div class="input-group">
+                    <label for="pickup">Pickup Location</label>
+                    <input type="text" id="pickup" placeholder="Enter pickup address">
+                </div>
+                <div class="input-group">
+                    <label for="destination">Destination</label>
+                    <input type="text" id="destination" placeholder="Enter destination address">
+                </div>
+            </div>
+            
+            <div class="ride-options">
+                <h3 class="section-title">Choose your ride</h3>
+                <div class="ride-types" id="rideOptions">
+                    <!-- Ride options will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <button class="btn btn-primary book-btn" id="bookBtn">Book SwiFT Ride</button>
+        </div>
+        
+        <div class="driver-dashboard" id="driverView">
+            <div class="map-container">
+                <div id="driverMap"></div>
+            </div>
+            
+            <div class="ride-options">
+                <h3 class="section-title">Driver Dashboard</h3>
+                <div class="input-group">
+                    <label for="driverStatus">Current Status</label>
+                    <select id="driverStatus">
+                        <option value="offline">Offline</option>
+                        <option value="available">Available</option>
+                        <option value="on-ride">On Ride</option>
+                    </select>
+                </div>
+                
+                <div id="currentRideInfo" style="display: none; margin-top: 20px;">
+                    <h4>Current Ride Information</h4>
+                    <p><strong>Rider:</strong> <span id="riderName">John Doe</span></p>
+                    <p><strong>Pickup:</strong> <span id="ridePickup">123 Main St</span></p>
+                    <p><strong>Destination:</strong> <span id="rideDestination">456 Central Ave</span></p>
+                    <p><strong>Fare:</strong> <span id="rideFare">$15.00</span></p>
+                    
+                    <div class="driver-actions">
+                        <button class="btn btn-purple" id="acceptRideBtn" style="display: none;">Accept Ride</button>
+                        <button class="btn btn-purple" id="startRideBtn" style="display: none;">Start Ride</button>
+                        <button class="btn btn-purple" id="completeRideBtn" style="display: none;">Complete Ride</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeLogin">&times;</span>
+            <h3 class="modal-title">Log In to SwiFT</h3>
+            
+            <div class="status-message" id="loginStatus"></div>
+            
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password">
+            </div>
+            <button class="btn btn-primary" id="submitLogin">Log In</button>
+            <div class="form-footer">
+                <p>Don't have an account? <a href="#" id="switchToSignup">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeSignup">&times;</span>
+            <h3 class="modal-title">Join SwiFT</h3>
+            
+            <div class="status-message" id="signupStatus"></div>
+            
+            <div class="user-type-selector">
+                <button class="user-type-btn active" id="riderTypeBtn">I want to ride</button>
+                <button class="user-type-btn" id="driverTypeBtn">I want to drive</button>
+            </div>
+            
+            <div id="riderSignupForm">
+                <div class="form-group">
+                    <label for="riderName">Full Name</label>
+                    <input type="text" id="riderName" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="riderEmail">Email</label>
+                    <input type="email" id="riderEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="riderPassword">Password</label>
+                    <input type="password" id="riderPassword" placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label for="riderPhone">Phone Number</label>
+                    <input type="tel" id="riderPhone" placeholder="Enter your phone number">
+                </div>
+                <button class="btn btn-primary" id="submitRiderSignup">Sign Up as Rider</button>
+            </div>
+            
+            <div id="driverSignupForm" class="driver-form">
+                <div class="form-group">
+                    <label for="driverName">Full Name</label>
+                    <input type="text" id="driverName" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="driverEmail">Email</label>
+                    <input type="email" id="driverEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="driverPassword">Password</label>
+                    <input type="password" id="driverPassword" placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label for="driverPhone">Phone Number</label>
+                    <input type="tel" id="driverPhone" placeholder="Enter your phone number">
+                </div>
+                <div class="form-group">
+                    <label for="driverLicense">Driver's License Number</label>
+                    <input type="text" id="driverLicense" placeholder="Enter your license number">
+                </div>
+                <div class="form-group">
+                    <label for="carModel">Car Model</label>
+                    <input type="text" id="carModel" placeholder="Enter your car model">
+                </div>
+                <div class="form-group">
+                    <label for="carPlate">License Plate</label>
+                    <input type="text" id="carPlate" placeholder="Enter your license plate">
+                </div>
+                <button class="btn btn-primary" id="submitDriverSignup">Sign Up as Driver</button>
+            </div>
+            
+            <div class="form-footer">
+                <p>Already have an account? <a href="#" id="switchToLogin">Log in</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Country Selection Modal -->
+    <div class="modal" id="countryModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Select Your Country</h3>
+            <p>Please select your country to determine the correct currency for your rides.</p>
+            <div class="form-group">
+                <label for="countrySelect">Country</label>
+                <select id="countrySelect">
+                    <option value="">Select a country</option>
+                    <option value="US">United States (USD)</option>
+                    <option value="UK">United Kingdom (GBP)</option>
+                    <option value="GH">Ghana (GHS)</option>
+                    <option value="NG">Nigeria (NGN)</option>
+                    <option value="KE">Kenya (KES)</option>
+                    <option value="ZA">South Africa (ZAR)</option>
+                    <option value="IN">India (INR)</option>
+                    <option value="CA">Canada (CAD)</option>
+                    <option value="AU">Australia (AUD)</option>
+                    <option value="EU">Eurozone (EUR)</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="confirmCountry">Confirm</button>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 SwiFT. All rights reserved.</p>
+            <p>Ride-hailing and driving platform</p>
+        </div>
+    </footer>
+    
+    <!-- Load Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVFImbpp5hyc5FvpU2K4neMijA5ZS4F2g&libraries=places&callback=initMap" async defer></script>
+    
+    <script>
+        // Sample ride data with different currencies
+        const rideData = {
+            "US": [
+                { name: "Standard", price: 15.00, details: "Everyday ride for up to 4 people", currency: "USD" },
+                { name: "Premium", price: 25.00, details: "Luxury vehicles with premium service", currency: "USD" },
+                { name: "XL", price: 30.00, details: "Larger vehicles for up to 6 people", currency: "USD" }
+            ],
+            "UK": [
+                { name: "Standard", price: 12.00, details: "Everyday ride for up to 4 people", currency: "GBP" },
+                { name: "Premium", price: 20.00, details: "Luxury vehicles with premium service", currency: "GBP" },
+                { name: "XL", price: 25.00, details: "Larger vehicles for up to 6 people", currency: "GBP" }
+            ],
+            "GH": [
+                { name: "Standard", price: 15.00, details: "Everyday ride for up to 4 people", currency: "GHS" },
+                { name: "Premium", price: 25.00, details: "Luxury vehicles with premium service", currency: "GHS" },
+                { name: "XL", price: 30.00, details: "Larger vehicles for up to 6 people", currency: "GHS" }
+            ],
+            "NG": [
+                { name: "Standard", price: 2500.00, details: "Everyday ride for up to 4 people", currency: "NGN" },
+                { name: "Premium", price: 4500.00, details: "Luxury vehicles with premium service", currency: "NGN" },
+                { name: "XL", price: 5500.00, details: "Larger vehicles for up to 6 people", currency: "NGN" }
+            ],
+            "default": [
+                { name: "Standard", price: 15.00, details: "Everyday ride for up to 4 people", currency: "USD" },
+                { name: "Premium", price: 25.00, details: "Luxury vehicles with premium service", currency: "USD" },
+                { name: "XL", price: 30.00, details: "Larger vehicles for up to 6 people", currency: "USD" }
+            ]
+        };
+        
+        // DOM Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const closeLogin = document.getElementById('closeLogin');
+        const closeSignup = document.getElementById('closeSignup');
+        const countryModal = document.getElementById('countryModal');
+        const confirmCountry = document.getElementById('confirmCountry');
+        const countrySelect = document.getElementById('countrySelect');
+        const rideOptions = document.getElementById('rideOptions');
+        const bookBtn = document.getElementById('bookBtn');
+        const pickupInput = document.getElementById('pickup');
+        const destinationInput = document.getElementById('destination');
+        const riderTypeBtn = document.getElementById('riderTypeBtn');
+        const driverTypeBtn = document.getElementById('driverTypeBtn');
+        const riderSignupForm = document.getElementById('riderSignupForm');
+        const driverSignupForm = document.getElementById('driverSignupForm');
+        const submitRiderSignup = document.getElementById('submitRiderSignup');
+        const submitDriverSignup = document.getElementById('submitDriverSignup');
+        const switchToSignup = document.getElementById('switchToSignup');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const loginStatus = document.getElementById('loginStatus');
+        const signupStatus = document.getElementById('signupStatus');
+        const riderView = document.getElementById('riderView');
+        const driverView = document.getElementById('driverView');
+        const driverStatus = document.getElementById('driverStatus');
+        const acceptRideBtn = document.getElementById('acceptRideBtn');
+        const startRideBtn = document.getElementById('startRideBtn');
+        const completeRideBtn = document.getElementById('completeRideBtn');
+        
+        // Global variables
+        let selectedCountry = localStorage.getItem('selectedCountry') || '';
+        let selectedRide = null;
+        let map;
+        let driverMap;
+        let directionsService;
+        let directionsRenderer;
+        let pickupAutocomplete;
+        let destinationAutocomplete;
+        let currentUser = null;
+        let currentRide = null;
+        
+        // Initialize the application
+        function initApp() {
+            // Check if user is already logged in
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUIForUser();
+            }
+            
+            // Check if country is already selected
+            if (!selectedCountry && !currentUser?.country) {
+                countryModal.style.display = 'flex';
+            } else if (currentUser?.country) {
+                selectedCountry = currentUser.country;
+                updateRideOptions(selectedCountry);
+            }
+            
+            setupEventListeners();
+        }
+        
+        // Initialize Google Map
+        function initMap() {
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 12,
+            });
+            
+            // Initialize driver map (separate instance)
+            driverMap = new google.maps.Map(document.getElementById("driverMap"), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 12,
+            });
+            
+            directionsRenderer.setMap(map);
+            initAutocomplete();
+        }
+        
+        // Initialize Autocomplete for address inputs
+        function initAutocomplete() {
+            pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput);
+            destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput);
+            
+            // When place changes, update the map
+            pickupAutocomplete.addListener('place_changed', updateMapWithRoute);
+            destinationAutocomplete.addListener('place_changed', updateMapWithRoute);
+        }
+        
+        // Calculate and display route on map
+        function updateMapWithRoute() {
+            const pickupPlace = pickupAutocomplete.getPlace();
+            const destinationPlace = destinationAutocomplete.getPlace();
+            
+            if (!pickupPlace || !destinationPlace || !pickupPlace.geometry || !destinationPlace.geometry) {
+                return;
+            }
+            
+            const request = {
+                origin: pickupPlace.geometry.location,
+                destination: destinationPlace.geometry.location,
+                travelMode: 'DRIVING'
+            };
+            
+            directionsService.route(request, function(result, status) {
+                if (status == 'OK') {
+                    directionsRenderer.setDirections(result);
+                    
+                    // Calculate distance and update price
+                    const route = result.routes[0];
+                    const distance = route.legs[0].distance.value / 1000; // in km
+                    updatePricesBasedOnDistance(distance);
+                }
+            });
+        }
+        
+        // Update prices based on distance
+        function updatePricesBasedOnDistance(distance) {
+            const rides = rideData[selectedCountry] || rideData.default;
+            const baseMultiplier = Math.max(1, distance / 5); // Price increases every 5km
+            
+            rides.forEach(ride => {
+                ride.dynamicPrice = ride.price * baseMultiplier;
+            });
+            
+            updateRideOptions(selectedCountry);
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Auth button listeners
+            loginBtn.addEventListener('click', () => {
+                loginModal.style.display = 'flex';
+                signupModal.style.display = 'none';
+            });
+            
+            signupBtn.addEventListener('click', () => {
+                signupModal.style.display = 'flex';
+                loginModal.style.display = 'none';
+            });
+            
+            closeLogin.addEventListener('click', () => {
+                loginModal.style.display = 'none';
+            });
+            
+            closeSignup.addEventListener('click', () => {
+                signupModal.style.display = 'none';
+            });
+            
+            // Country selection
+            confirmCountry.addEventListener('click', () => {
+                if (countrySelect.value) {
+                    selectedCountry = countrySelect.value;
+                    localStorage.setItem('selectedCountry', selectedCountry);
+                    
+                    // Save country to user if logged in
+                    if (currentUser) {
+                        currentUser.country = selectedCountry;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    }
+                    
+                    countryModal.style.display = 'none';
+                    updateRideOptions(selectedCountry);
+                } else {
+                    showStatusMessage('Please select a country', 'error', countryModal);
+                }
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === loginModal) {
+                    loginModal.style.display = 'none';
+                }
+                if (e.target === signupModal) {
+                    signupModal.style.display = 'none';
+                }
+                if (e.target === countryModal) {
+                    countryModal.style.display = 'none';
+                }
+            });
+            
+            // Booking
+            bookBtn.addEventListener('click', () => {
+                if (!selectedRide) {
+                    alert('Please select a ride type');
+                    return;
+                }
+                
+                const pickup = pickupInput.value;
+                const destination = destinationInput.value;
+                
+                if (!pickup || !destination) {
+                    alert('Please enter both pickup and destination locations');
+                    return;
+                }
+                
+                const finalPrice = selectedRide.dynamicPrice || selectedRide.price;
+                
+                // Create a ride request
+                currentRide = {
+                    id: Date.now().toString(),
+                    rider: currentUser.name,
+                    pickup,
+                    destination,
+                    rideType: selectedRide.name,
+                    price: finalPrice,
+                    currency: selectedRide.currency,
+                    status: 'requested'
+                };
+                
+                // In a real app, this would be sent to a server and matched with a driver
+                alert(`Ride requested!\n\nRide Type: ${selectedRide.name}\nPrice: ${selectedRide.currency} ${finalPrice.toFixed(2)}\n\nPickup: ${pickup}\nDestination: ${destination}`);
+                
+                // For demo purposes, show the ride to the driver
+                if (currentUser?.type === 'driver') {
+                    showDriverRideRequest(currentRide);
+                }
+            });
+            
+            // User type selection in signup
+            riderTypeBtn.addEventListener('click', () => {
+                riderTypeBtn.classList.add('active');
+                driverTypeBtn.classList.remove('active');
+                riderSignupForm.style.display = 'block';
+                driverSignupForm.style.display = 'none';
+            });
+            
+            driverTypeBtn.addEventListener('click', () => {
+                driverTypeBtn.classList.add('active');
+                riderTypeBtn.classList.remove('active');
+                driverSignupForm.style.display = 'block';
+                riderSignupForm.style.display = 'none';
+            });
+            
+            // Form submissions
+            submitRiderSignup.addEventListener('click', handleRiderSignup);
+            submitDriverSignup.addEventListener('click', handleDriverSignup);
+            document.getElementById('submitLogin').addEventListener('click', handleLogin);
+            
+            // Switch between login/signup
+            switchToSignup.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.style.display = 'none';
+                signupModal.style.display = 'flex';
+            });
+            
+            switchToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                signupModal.style.display = 'none';
+                loginModal.style.display = 'flex';
+            });
+            
+            // Driver status changes
+            driverStatus.addEventListener('change', (e) => {
+                if (e.target.value === 'available') {
+                    // Driver is now available for rides
+                    acceptRideBtn.style.display = 'block';
+                    startRideBtn.style.display = 'none';
+                    completeRideBtn.style.display = 'none';
+                    
+                    // In a real app, this would notify the server
+                    console.log('Driver is now available for rides');
+                } else if (e.target.value === 'offline') {
+                    // Driver is offline
+                    acceptRideBtn.style.display = 'none';
+                    startRideBtn.style.display = 'none';
+                    completeRideBtn.style.display = 'none';
+                    document.getElementById('currentRideInfo').style.display = 'none';
+                }
+            });
+            
+            // Driver actions
+            acceptRideBtn.addEventListener('click', () => {
+                if (currentRide) {
+                    currentRide.status = 'accepted';
+                    showStatusMessage('Ride accepted! Please proceed to pickup location.', 'success');
+                    acceptRideBtn.style.display = 'none';
+                    startRideBtn.style.display = 'block';
+                    
+                    // Update ride info display
+                    document.getElementById('riderName').textContent = currentRide.rider;
+                    document.getElementById('ridePickup').textContent = currentRide.pickup;
+                    document.getElementById('rideDestination').textContent = currentRide.destination;
+                    document.getElementById('rideFare').textContent = `${currentRide.currency} ${currentRide.price.toFixed(2)}`;
+                    document.getElementById('currentRideInfo').style.display = 'block';
+                }
+            });
+            
+            startRideBtn.addEventListener('click', () => {
+                if (currentRide) {
+                    currentRide.status = 'in-progress';
+                    showStatusMessage('Ride started! Please drive safely to the destination.', 'success');
+                    startRideBtn.style.display = 'none';
+                    completeRideBtn.style.display = 'block';
+                    driverStatus.value = 'on-ride';
+                }
+            });
+            
+            completeRideBtn.addEventListener('click', () => {
+                if (currentRide) {
+                    currentRide.status = 'completed';
+                    showStatusMessage(`Ride completed! ${currentRide.currency} ${currentRide.price.toFixed(2)} has been added to your earnings.`, 'success');
+                    completeRideBtn.style.display = 'none';
+                    driverStatus.value = 'available';
+                    document.getElementById('currentRideInfo').style.display = 'none';
+                    
+                    // Reset for next ride
+                    currentRide = null;
+                }
+            });
+        }
+        
+        // Handle rider signup
+        function handleRiderSignup() {
+            const name = document.getElementById('riderName').value;
+            const email = document.getElementById('riderEmail').value;
+            const password = document.getElementById('riderPassword').value;
+            const phone = document.getElementById('riderPhone').value;
+            
+            if (!name || !email || !password || !phone) {
+                showStatusMessage('Please fill in all fields', 'error', signupModal);
+                return;
+            }
+            
+            // In a real app, this would be sent to a server
+            currentUser = {
+                id: Date.now().toString(),
+                name,
+                email,
+                password, // Note: In a real app, never store passwords in plain text
+                phone,
+                type: 'rider',
+                country: selectedCountry
+            };
+            
+            // Save user to localStorage
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            showStatusMessage('Account created successfully!', 'success', signupModal);
+            
+            // Close signup modal after delay
+            setTimeout(() => {
+                signupModal.style.display = 'none';
+                updateUIForUser();
+                
+                // Show country selection if not already selected
+                if (!selectedCountry) {
+                    countryModal.style.display = 'flex';
+                }
+            }, 1500);
+        }
+        
+        // Handle driver signup
+        function handleDriverSignup() {
+            const name = document.getElementById('driverName').value;
+            const email = document.getElementById('driverEmail').value;
+            const password = document.getElementById('driverPassword').value;
+            const phone = document.getElementById('driverPhone').value;
+            const license = document.getElementById('driverLicense').value;
+            const carModel = document.getElementById('carModel').value;
+            const carPlate = document.getElementById('carPlate').value;
+            
+            if (!name || !email || !password || !phone || !license || !carModel || !carPlate) {
+                showStatusMessage('Please fill in all fields', 'error', signupModal);
+                return;
+            }
+            
+            // In a real app, this would be sent to a server
+            currentUser = {
+                id: Date.now().toString(),
+                name,
+                email,
+                password, // Note: In a real app, never store passwords in plain text
+                phone,
+                type: 'driver',
+                license,
+                carModel,
+                carPlate,
+                country: selectedCountry,
+                status: 'offline'
+            };
+            
+            // Save user to localStorage
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            showStatusMessage('Driver account created successfully!', 'success', signupModal);
+            
+            // Close signup modal after delay
+            setTimeout(() => {
+                signupModal.style.display = 'none';
+                updateUIForUser();
+                
+                // Show country selection if not already selected
+                if (!selectedCountry) {
+                    countryModal.style.display = 'flex';
+                }
+            }, 1500);
+        }
+        
+        // Handle login
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // In a real app, this would verify against a server
+            // For demo, we'll check against localStorage
+            const savedUser = localStorage.getItem('currentUser');
+            
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                if (user.email === email && user.password === password) {
+                    currentUser = user;
+                    showStatusMessage('Login successful!', 'success', loginModal);
+                    
+                    setTimeout(() => {
+                        loginModal.style.display = 'none';
+                        updateUIForUser();
+                        
+                        // Show country selection if not already selected
+                        if (!selectedCountry && !currentUser.country) {
+                            countryModal.style.display = 'flex';
+                        } else if (currentUser.country) {
+                            selectedCountry = currentUser.country;
+                            updateRideOptions(selectedCountry);
+                        }
+                    }, 1000);
+                    return;
+                }
+            }
+            
+            showStatusMessage('Invalid email or password', 'error', loginModal);
+        }
+        
+        // Update UI based on user type
+        function updateUIForUser() {
+            if (!currentUser) {
+                // Not logged in
+                riderView.style.display = 'none';
+                driverView.style.display = 'none';
+                loginBtn.style.display = 'block';
+                signupBtn.style.display = 'block';
+                return;
+            }
+            
+            if (currentUser.type === 'rider') {
+                // Rider view
+                riderView.style.display = 'flex';
+                driverView.style.display = 'none';
+                loginBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                
+                // Update header to show user name
+                document.querySelector('.tagline').textContent = `Welcome, ${currentUser.name}`;
+            } else if (currentUser.type === 'driver') {
+                // Driver view
+                riderView.style.display = 'none';
+                driverView.style.display = 'block';
+                loginBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                
+                // Update header to show driver info
+                document.querySelector('.tagline').textContent = `Driver: ${currentUser.name} | ${currentUser.carModel}`;
+                
+                // Set initial driver status
+                driverStatus.value = 'offline';
+            }
+        }
+        
+        // Show a ride request to the driver
+        function showDriverRideRequest(ride) {
+            if (currentUser?.type === 'driver' && driverStatus.value === 'available') {
+                // In a real app, this would come from a server push
+                const shouldAccept = confirm(`New ride request!\n\nFrom: ${ride.pickup}\nTo: ${ride.destination}\nFare: ${ride.currency} ${ride.price.toFixed(2)}\n\nAccept this ride?`);
+                
+                if (shouldAccept) {
+                    currentRide = ride;
+                    currentRide.status = 'accepted';
+                    
+                    // Update UI
+                    document.getElementById('riderName').textContent = ride.rider;
+                    document.getElementById('ridePickup').textContent = ride.pickup;
+                    document.getElementById('rideDestination').textContent = ride.destination;
+                    document.getElementById('rideFare').textContent = `${ride.currency} ${ride.price.toFixed(2)}`;
+                    document.getElementById('currentRideInfo').style.display = 'block';
+                    
+                    acceptRideBtn.style.display = 'none';
+                    startRideBtn.style.display = 'block';
+                    driverStatus.value = 'on-ride';
+                    
+                    showStatusMessage('Ride accepted! Please proceed to pickup location.', 'success');
+                }
+            }
+        }
+        
+        // Update ride options based on selected country
+        function updateRideOptions(country) {
+            const rides = rideData[country] || rideData.default;
+            rideOptions.innerHTML = '';
+            
+            rides.forEach(ride => {
+                const priceToShow = ride.dynamicPrice || ride.price;
+                const rideCard = document.createElement('div');
+                rideCard.className = 'ride-card';
+                rideCard.innerHTML = `
+                    <div class="ride-name">${ride.name}</div>
+                    <div class="ride-price">${ride.currency} ${priceToShow.toFixed(2)}</div>
+                    <div class="ride-details">${ride.details}</div>
+                `;
+                
+                rideCard.addEventListener('click', () => {
+                    document.querySelectorAll('.ride-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    rideCard.classList.add('selected');
+                    selectedRide = ride;
+                });
+                
+                rideOptions.appendChild(rideCard);
+            });
+        }
+        
+        // Show status message in a modal
+        function showStatusMessage(message, type, modalElement) {
+            const statusElement = modalElement ? modalElement.querySelector('.status-message') : null;
+            
+            if (statusElement) {
+                statusElement.textContent = message;
+                statusElement.className = 'status-message ' + type;
+                statusElement.style.display = 'block';
+                
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    statusElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        // Initialize the app when Google Maps API is loaded
+        function initMap() {
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 12,
+            });
+            
+            // Initialize driver map (separate instance)
+            driverMap = new google.maps.Map(document.getElementById("driverMap"), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 12,
+            });
+            
+            directionsRenderer.setMap(map);
+            initAutocomplete();
+            initApp();
+        }
+        
+        // Expose initMap to global scope for Google Maps callback
+        window.initMap = initMap;
+    </script>
+</body>
+</html>
